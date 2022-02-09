@@ -9,6 +9,8 @@ class RecipeView {
   // properties
   #parentElement = document.querySelector('.recipe');
   #data;
+  #errorMessage = 'We could not find that recipe. Please try another one!';
+  #successMessage = '';
 
   // render method
   render(data) {
@@ -31,7 +33,7 @@ class RecipeView {
           </svg>
         </div>
   `;
-    this.#parentElement.innerHTML = '';
+    this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
@@ -40,6 +42,39 @@ class RecipeView {
     ['hashchange', 'load'].forEach(ev => {
       window.addEventListener(ev, handler);
     });
+  }
+
+  // public method
+  // (message = this.#errorMessage) ==>> if no message is passed in then set a default message
+  // and defauöt is the #errorMessage we specified
+  renderError(message = this.#errorMessage) {
+    const markup = `
+    <div class="error">
+        <div>
+          <svg>
+            <use href="${icons}#icon-alert-triangle"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+    </div>
+    `;
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+
+  renderMessage(message = this.#successMessage) {
+    const markup = `
+    <div class="message">
+        <div>
+          <svg>
+            <use href="${icons}#icon-smile"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+    </div>
+    `;
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
   // Private method
