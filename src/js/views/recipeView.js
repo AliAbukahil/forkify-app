@@ -3,7 +3,6 @@ import icons from 'url:../../img/icons.svg'; // Parcel 2
 
 // Fractional provides a simple interface to add, subtract, multiply, and divide fractions.
 import { Fraction } from 'fractional';
-console.log(Fraction);
 
 class RecipeView {
   // properties
