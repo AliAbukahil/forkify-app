@@ -12,10 +12,10 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { async } from 'regenerator-runtime';
 
-// this code is not javescript code but Parcel
-if (module.hot) {
-  module.hot.accept();
-}
+// this code is not javescript code but Parcel code to save the state
+// if (module.hot) {
+//   module.hot.accept();
+// }
 
 const controlRecipes = async function () {
   try {
@@ -49,7 +49,7 @@ const controlSearchResults = async function () {
     await model.loadSearchResults(query);
 
     // 3) Render Results
-    resultsView.render(model.state.search.results);
+    resultsView.render(model.getSearchResultsPage());
   } catch (err) {
     console.log(err);
   }
