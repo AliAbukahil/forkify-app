@@ -68,10 +68,19 @@ const controlPagination = function (goToPage) {
   paginationView.render(model.state.search);
 };
 
+const controlServings = function (newServings) {
+  // Update the recipe servings (in state)
+  model.updateServings(newServings);
+
+  // Update the recipe view
+  recipeView.render(model.state.recipe);
+};
+
 // Publisher-Subscriber-Pattern Implementation
 // this keeps everything nicely separated in the MVC architecture
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
+  recipeView.addhandlerUpdateServings(controlServings);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
 };
