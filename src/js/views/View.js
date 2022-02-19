@@ -23,7 +23,7 @@ export default class View {
   update(data) {
     this._data = data;
     const newMarkup = this._generateMarkup();
-    console.log(newMarkup);
+    // console.log(newMarkup);
 
     // This method will then convert that string into real DOM node objects
     const newDOM = document.createRange().createContextualFragment(newMarkup);
