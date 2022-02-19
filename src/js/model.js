@@ -89,12 +89,19 @@ export const updateServings = function (newServings) {
   state.recipe.servings = newServings;
 };
 
+// Storing Bookmarks wuth localStorage
+const persistBookmarks = function () {
+  localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
+};
+
 export const addBookmark = function (recipe) {
   // Add bookmark
   state.bookmarks.push(recipe);
 
   // Mark current recipe as bookmarked
   if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+
+  persistBookmarks();
 };
 
 export const deleteBookmark = function (id) {
@@ -105,4 +112,21 @@ export const deleteBookmark = function (id) {
 
   // Mark current recipe as NOT bookmarked
   if (id === state.recipe.id) state.recipe.bookmarked = false;
+
+  persistBookmarks();
 };
+
+// taking code out of localStorage and view in browser
+const init = function () {
+  const storage = localStorage.getItem('bookmarks');
+  // only if there is storage
+  // JSON.parse to convert the String data type back to Object, because the data was in persistBookmarks function stringified!
+  if (storage) state.bookmarks = JSON.parse(storage);
+};
+init();
+
+// a function only in development used to clear local storage from bookmarks
+const clearBookmarks = function () {
+  localStorage.clear('bookmarks');
+};
+// clearBookmarks();
