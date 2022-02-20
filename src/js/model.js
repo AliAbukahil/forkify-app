@@ -1,6 +1,6 @@
 import { async } from 'regenerator-runtime';
-import { API_URL, RES_PER_PAGE } from './config.js';
-import { getJSON } from './helpers.js';
+import { API_URL, RES_PER_PAGE, KEY } from './config.js';
+import { getJSON, sendJSON } from './helpers.js';
 
 //named exports
 export const state = {
@@ -14,24 +14,32 @@ export const state = {
   bookmarks: [],
 };
 
+const createRecipeObject = function (data) {
+  const { recipe } = data.data;
+  return {
+    id: recipe.id,
+    title: recipe.title,
+    publisher: recipe.publisher,
+    sourceUrl: recipe.source_url,
+    image: recipe.image_url,
+    servings: recipe.servings,
+    cookingTime: recipe.cooking_time,
+    ingredients: recipe.ingredients,
+    // the && operator which does short circuiting
+    // this happens only in case the Key does exist
+    // very nice trick ;) to conditionally add properties to an Object
+    ...(recipe.key && { key: recipe.key }),
+  };
+};
+
 //named exports
 export const loadRecipe = async function (id) {
   try {
     // getJSON method will fetch the data and also convert it to JSON
     // and create an error if something went wrong
     const data = await getJSON(`${API_URL}${id}`);
+    state.recipe = createRecipeObject(data);
 
-    const { recipe } = data.data;
-    state.recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      sourceUrl: recipe.source_url,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients,
-    };
     // some method return true or false & array method
     if (state.bookmarks.some(bookmark => bookmark.id === id))
       state.recipe.bookmarked = true;
@@ -130,3 +138,40 @@ const clearBookmarks = function () {
   localStorage.clear('bookmarks');
 };
 // clearBookmarks();
+
+export const uploadRecipe = async function (newRecipe) {
+  try {
+    // Object.entries converts back to array && it's the opposite of object.fromEntries
+    // console.log(Object.entries(newRecipe));
+    const ingredients = Object.entries(newRecipe)
+      .filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '')
+      .map(ing => {
+        const ingArr = ing[1].replaceAll(' ', '').split(',');
+        const [quantity, unit, description] = ingArr;
+        if (ingArr.length !== 3)
+          throw Error(
+            'Wrong ingredient format! Please use the correct format 😱'
+          );
+
+        return { quantity: quantity ? +quantity : null, unit, description };
+      });
+
+    const recipe = {
+      title: newRecipe.title,
+      source_url: newRecipe.sourceUrl,
+      image_url: newRecipe.image,
+      publisher: newRecipe.publisher,
+      cooking_time: +newRecipe.cookingTime,
+      servings: +newRecipe.servings,
+      ingredients,
+    };
+
+    // ? the question mark to specify a list of parameters
+    const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe);
+    // Storing that in the State
+    state.recipe = createRecipeObject(data);
+    addBookmark(state.recipe);
+  } catch (err) {
+    throw err;
+  }
+};
