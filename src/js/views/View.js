@@ -4,6 +4,18 @@ import icons from 'url:../../img/icons.svg'; // Parcel 2
 export default class View {
   _data;
 
+  // JSDoc format
+
+  /**
+   * Render the received object to the DOM
+   * @param {Object | Object[]} data The data to be rendered (e.g recipe)
+   * @param {boolean} [render=true] If false, create markup string instead of rendering to the DOM
+   * @returns {undefined | string} A markup string is retured if render=false
+   * @this {Object} View
+   * @author Ali Abukahil
+   * @todo Finish implementation
+   */
+
   // render method
   render(data, render = true) {
     // guard clause
