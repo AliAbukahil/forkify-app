@@ -16,11 +16,6 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { async } from 'regenerator-runtime';
 
-// this code is not javescript code but Parcel code to save the state
-// if (module.hot) {
-//   module.hot.accept();
-// }
-
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
@@ -59,7 +54,6 @@ const controlSearchResults = async function () {
     await model.loadSearchResults(query);
 
     // 3) Render Results
-    // resultsView.render(model.state.search.results);
     resultsView.render(model.getSearchResultsPage());
 
     // 4) Render inital pagination buttons
@@ -82,7 +76,6 @@ const controlServings = function (newServings) {
   model.updateServings(newServings);
 
   // Update the recipe view
-  // recipeView.render(model.state.recipe);
   recipeView.update(model.state.recipe);
 };
 
@@ -133,10 +126,6 @@ const controlAddRecipe = async function (newRecipe) {
   }
 };
 
-const newFeature = function () {
-  console.log('Welcome to the application!');
-};
-
 // Publisher-Subscriber-Pattern Implementation
 // this keeps everything nicely separated in the MVC architecture
 // this means the model.js && the View.js don't know anything about one another
@@ -151,5 +140,3 @@ const init = function () {
   addRecipeView.addHandlerUpload(controlAddRecipe);
   newFeature();
 };
-
-init();
