@@ -1,6 +1,7 @@
 import { async } from 'regenerator-runtime';
 import { API_URL, RES_PER_PAGE, KEY } from './config.js';
-import { getJSON, sendJSON } from './helpers.js';
+import { AJAX } from './helpers.js';
+// import { getJSON, sendJSON } from './helpers.js';
 
 //named exports
 export const state = {
@@ -37,7 +38,7 @@ export const loadRecipe = async function (id) {
   try {
     // getJSON method will fetch the data and also convert it to JSON
     // and create an error if something went wrong
-    const data = await getJSON(`${API_URL}${id}`);
+    const data = await AJAX(`${API_URL}${id}?key=${KEY}`);
     state.recipe = createRecipeObject(data);
 
     // some method return true or false & array method
@@ -59,7 +60,7 @@ export const loadSearchResults = async function (query) {
   try {
     state.search.query = query;
     // getJSON returns a promise so we await it
-    const data = await getJSON(`${API_URL}?search=${query}`);
+    const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
     console.log(data);
 
     state.search.results = data.data.recipes.map(rec => {
@@ -69,6 +70,10 @@ export const loadSearchResults = async function (query) {
         title: rec.title,
         publisher: rec.publisher,
         image: rec.image_url,
+        // the && operator which does short circuiting
+        // this happens only in case the Key does exist
+        // very nice trick ;) to conditionally add properties to an Object
+        ...(rec.key && { key: rec.key }),
       };
     });
     state.search.page = 1;
@@ -146,7 +151,8 @@ export const uploadRecipe = async function (newRecipe) {
     const ingredients = Object.entries(newRecipe)
       .filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '')
       .map(ing => {
-        const ingArr = ing[1].replaceAll(' ', '').split(',');
+        const ingArr = ing[1].split(',').map(el => el.trim());
+        // const ingArr = ing[1].replaceAll(' ', '').split(',');
         const [quantity, unit, description] = ingArr;
         if (ingArr.length !== 3)
           throw Error(
@@ -167,7 +173,7 @@ export const uploadRecipe = async function (newRecipe) {
     };
 
     // ? the question mark to specify a list of parameters
-    const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe);
+    const data = await AJAX(`${API_URL}?key=${KEY}`, recipe);
     // Storing that in the State
     state.recipe = createRecipeObject(data);
     addBookmark(state.recipe);
