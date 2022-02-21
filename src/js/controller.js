@@ -133,6 +133,10 @@ const controlAddRecipe = async function (newRecipe) {
   }
 };
 
+const newFeature = function () {
+  console.log('Welcome to the application');
+};
+
 // Publisher-Subscriber-Pattern Implementation
 // this keeps everything nicely separated in the MVC architecture
 // this means the model.js && the View.js don't know anything about one another
@@ -145,6 +149,7 @@ const init = function () {
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
   addRecipeView.addHandlerUpload(controlAddRecipe);
+  newFeature();
 };
 
 init();
